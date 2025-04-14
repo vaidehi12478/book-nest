@@ -27,8 +27,7 @@ class HomeScreen extends StatelessWidget {
     "Literature",
     "Computing",
     "Mathematics",
-    "Science",
-    "Fiction",
+    "Science Fiction",
     "Economics"
   ];
 
@@ -36,8 +35,7 @@ class HomeScreen extends StatelessWidget {
     LiteraturePage(),
     ComputingPage(),
     MathematicsPage(),
-    SciencePage(),
-    FictionPage(),
+    ScienceFictionPage(),
     EconomicsPage()
   ];
 
@@ -199,113 +197,561 @@ class NotificationsPage extends StatelessWidget {
     );
   }
 }
-class LiteraturePage extends StatelessWidget {
+// class LiteraturePage extends StatefulWidget {
+//   @override
+//   _LiteraturePageState createState() => _LiteraturePageState();
+// }
+//
+// class _LiteraturePageState extends State<LiteraturePage> {
+//   late Future<List<Book>> _booksFuture;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _booksFuture = fetchBooksByType("literature");
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Literature")),
+//       body: FutureBuilder<List<Book>>(
+//         future: _booksFuture,
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return Center(child: CircularProgressIndicator());
+//           } else if (snapshot.hasError || !snapshot.hasData) {
+//             return Center(child: Text("Failed to load books."));
+//           }
+//
+//           final books = snapshot.data!;
+//           body: Container(
+//             decoration: BoxDecoration(
+//               image: DecorationImage(
+//                 image: NetworkImage(
+//                     "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           );
+//           return ListView.builder(
+//             itemCount: books.length,
+//             itemBuilder: (context, index) {
+//               final book = books[index];
+//               return Card(
+//                 child: ListTile(
+//                   title: Text(book.title),
+//                   subtitle: Text("${book.author}\n${book.description}"),
+//
+//
+//                 ),
+//               );
+//             },
+//           );
+//         },
+//       ),
+//
+//     );
+//   }
+// }
+class LiteraturePage extends StatefulWidget {
+  @override
+  _LiteraturePageState createState() => _LiteraturePageState();
+}
+
+class _LiteraturePageState extends State<LiteraturePage> {
+  late Future<List<Book>> _booksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksFuture = fetchBooksByType("literature");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Literature")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
+      body: FutureBuilder<List<Book>>(
+        future: _booksFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Failed to load books."));
+          }
+
+          final books = snapshot.data!;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg",
+                ),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        )
+            child: ListView.builder(
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade900.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        "https://media-hosting.imagekit.io/23abcfbc01b54935/9788126930784_456x700.webp?Expires=1839241893&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CWAiCwWw052dyouilOFUGhYy2I4w7NpEB9If~nZwNf6iu3R0R2cZkooLIwSD2gHUzgymrwqqticE4cXSkR6nHv3InNIXuO2BV2Ni9Wb9jJ2AH7ppI1aghDwi5kbN087sB-KnyP-IbiyAxZ0DGqdjcrR2EkKa~MX1tifI9aGiqiW8E1HpwJ2KYyF6DhZDSWBctL5EFo3RZTpS7kUIoCM7247KRDLAXPxISVdU6eY2QbuKR0dRyPtaw4AjCDSgI9zvzVvuu2GeWE43MlIyBUlmsdoBKbLQwNpAXM4idFCk0rP52orieAMId4MbF2JW6s~2sjbcP9Ajo491LU39vXAzjg__",
+                        width: 60,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      book.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      book.author,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
+class ComputingPage extends StatefulWidget {
+  @override
+  _ComputingPageState createState() => _ComputingPageState();
+}
 
-class ComputingPage extends StatelessWidget {
+class _ComputingPageState extends State<ComputingPage> {
+  late Future<List<Book>> _booksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksFuture = fetchBooksByType("computing");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Computing")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
+      body: FutureBuilder<List<Book>>(
+        future: _booksFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Failed to load books."));
+          }
+
+          final books = snapshot.data!;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg",
+                ),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        )
+            child: ListView.builder(
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade900.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        "https://media-hosting.imagekit.io/90b26e0ed77d41ff/0470887990.jpg?Expires=1839241748&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=ZJv4EWrML23Z~QJV3BVi38KpjLJqXuDWMUmmdMfZ1OaJ41oDhKeSJlr07m0HZBLMdxszVocLN-HinZqQPcA1IWesBYzWuAuhrpqnoS6s5bAUkUXJglefAX1yWaF2OmHNG5io9~AUst-iRCZmbHDk9eauT2FePW~UJj4d9mApj6EYdUpiqtoN6SshIWWswsNb7R7LGTgBweRst3zvkKJDCMes9POQmbVgfXwOfnxHNGxaFMwy6xBQ8FNX2R5hvTlx~-WX1mPvbmEPFdk5R9K76lcMej7DUtGgdgObyUk04Xcy-eUdnlXAfuZzW9gYEmR28yZwBSgJ-kNKqnv800pLJQ__",
+                        width: 60,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      book.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      book.author,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
+class MathematicsPage extends StatefulWidget {
+  @override
+  _MathematicsPageState createState() => _MathematicsPageState();
+}
 
-class MathematicsPage extends StatelessWidget {
+class _MathematicsPageState extends State<MathematicsPage> {
+  late Future<List<Book>> _booksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksFuture = fetchBooksByType("mathematics");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Mathematics")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
+      body: FutureBuilder<List<Book>>(
+        future: _booksFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Failed to load books."));
+          }
+
+          final books = snapshot.data!;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        )
+            child: ListView.builder(
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade900.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        "https://media-hosting.imagekit.io/a93e0caa30af48e2/screenshot_1744630906640.png?Expires=1839238908&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=MYX7z6dqassQWnKzvZS7OQKFnMIHvxA~8nr4kW9yN85K8veTIsGBydQsOnj88hkxhmr43D8XZOU5GThfchlpiUsaWTZuCEmjaScfQvhdHrhNxNl1d6ZdtoM3uZT8jANVBXy6XlNizgCkNn3fRHZZs~NI7yS0FG0hFWzWSYTzfLUqjvnFrZ-AfNXt5k1L76LwepKbLpFPziVpHH29Enb-RROVCYWBAhem4u1owuJ2GOoGd2CFUWhf1p6C9XTx9t6bzSUgkWUjgLZxSSULN4BgUemddmO2GFXsti~JnvJHjIvsBmcp0S~PQFoHkmtJhhcCOYqDeyl5JYozRdCphljPEw__",
+                        width: 60,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      book.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      book.author,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
+class ScienceFictionPage extends StatefulWidget {
+  @override
+  _ScienceFictionPageState createState() => _ScienceFictionPageState();
+}
 
-class SciencePage extends StatelessWidget {
+class _ScienceFictionPageState extends State<ScienceFictionPage> {
+  late Future<List<Book>> _booksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksFuture = fetchBooksByType("science fiction");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Science")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
+      appBar: AppBar(title: Text("Science Fiction")),
+      body: FutureBuilder<List<Book>>(
+        future: _booksFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Failed to load books."));
+          }
+
+          final books = snapshot.data!;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        )
+            child: ListView.builder(
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade900.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        "https://media-hosting.imagekit.io/5ebc4f369b70407c/download.jpg?Expires=1839241959&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=vD6AYDYN0ZjWJP7ddcMc~75Ua6IcjGXc72S5t89QNEzTUVpp2wTMlZTICQStG5iMMpbIwUPofYpYHP35TSh9wRvHPQzUPH8HezsBC5RBjyJyTuObHVV3NkrpwJpXKRnfL4FDl74AKRuMwxrVVYTNs6X1M1YR6z2CCheij6sZ8oKoxy123uaV~~shT-YAUpS8OU4gae-0dtCp~R-4waoNbLMHvQxi19-Iuft~BBXBjfXeW9Moho8QRg-h74K3KEnGbo~87EJS1t9bfaREcKu7Pv~Vez1qeQ6SNsLzsrmfETQ25CJgyYUFzxcE5ZIiO2VhLmLx0Fid~8t61Ku3~gO~bg__",
+                        width: 60,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      book.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      book.author,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
-
-class FictionPage extends StatelessWidget {
+class EconomicsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Fiction")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-        )
-    );
-  }
+  _EconomicsPageState createState() => _EconomicsPageState();
 }
 
-class EconomicsPage extends StatelessWidget {
+class _EconomicsPageState extends State<EconomicsPage> {
+  late Future<List<Book>> _booksFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _booksFuture = fetchBooksByType("economics");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Economics")),
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                  "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-              fit: BoxFit.cover,
+      body: FutureBuilder<List<Book>>(
+        future: _booksFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError || !snapshot.hasData) {
+            return Center(child: Text("Failed to load books."));
+          }
+
+          final books = snapshot.data!;
+
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-        )
+            child: ListView.builder(
+              itemCount: books.length,
+              itemBuilder: (context, index) {
+                final book = books[index];
+
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.brown.shade900.withOpacity(0.75),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.all(12),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        "https://media-hosting.imagekit.io/69e91b4e3e254bf2/download.jpg?Expires=1839241928&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=EUbNEGe-bBPOaNSRadPS6QGMEKWtWJj1uqVTdWkm8suGaswqfDrsBPppiGm7~C1w6SRf7kF2~Qkx-p8LbbSr8GXIbfoirkAznB-HuAkZ1BnXX42Y6WRMyWY9s4M7Yjam8ja47vTtVd8R3DsdsT-DEwtBwZCatmq7GxhROwlId0JOueQ-wTuwIj5yjXRURV36qo3RrBs5GCgJ9mTy3JRYNbgO19QuKgTzT31Hw0IOoZAV3CJWem1QtfmtaSyNUkJSIGhdGwOaZ5YlDjYxC2eDF5dsUGkag81IMNN39a--JCV-C6b15NronAjid8qcTCiF4JZNepkhasAO9XQ5bA9orA__",
+                        width: 60,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      book.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                    subtitle: Text(
+                      book.author,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
+
+
+
+
+// class LiteraturePage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Literature")),
+//         body: Container(
+//           decoration: BoxDecoration(
+//             image: DecorationImage(
+//               image: NetworkImage(
+//                   "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+//               fit: BoxFit.cover,
+//             ),
+//           ),
+//         )
+//     );
+//   }
+// }
+
+// class ComputingPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Computing")),
+//         body: Container(
+//           decoration: BoxDecoration(
+//             image: DecorationImage(
+//               image: NetworkImage(
+//                   "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
+//               fit: BoxFit.cover,
+//             ),
+//           ),
+//         )
+//     );
+//   }
+// }
+
+
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -419,6 +865,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -479,3 +928,41 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+class Book {
+  final String title;
+  final String author;
+  final String description;
+
+  Book({required this.title, required this.author, required this.description});
+
+  factory Book.fromJson(Map<String, dynamic> json) {
+    return Book(
+      title: json['title'] ?? 'No Title',
+      author: json['author'] ?? 'Unknown Author',
+      description: json['description'] ?? 'No Description',
+    );
+  }
+}
+Future<List<Book>> fetchBooksByType(String bookType) async {
+  final url = Uri.parse('$apiUrl/api/books?bookType=$bookType');
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final jsonData = jsonDecode(response.body);
+      if (jsonData['success']) {
+        List<dynamic> booksJson = jsonData['books'];
+        return booksJson.map((book) => Book.fromJson(book)).toList();
+      } else {
+        throw Exception("Failed to load books: ${jsonData['message']}");
+      }
+    } else {
+      throw Exception("Failed to fetch books");
+    }
+  } catch (e) {
+    print("API Error: $e");
+    return [];
+  }
+}
+
