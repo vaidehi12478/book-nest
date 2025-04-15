@@ -10,6 +10,140 @@ void main() {
   runApp(LibraryApp());
 }
 
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Auth Options',
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: LoginRegisterPage(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+// Login/Register Page (Initial Screen)
+class LoginRegisterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome!',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 40),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                ),
+                child: Text('Login', style: TextStyle(fontSize: 18)),
+              ),
+              SizedBox(height: 20),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  side: BorderSide(color: Colors.deepPurple),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                ),
+                child: Text('Register', style: TextStyle(fontSize: 18)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Placeholder Login Page
+// class LoginPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Login')),
+//       body: Center(child: Text('Login Page')),
+//     );
+//   }
+// }
+
+// Placeholder Register Page
+class LoginPage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Login')),
+      backgroundColor: Colors.brown.shade100,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.book, size: 100, color: Colors.brown),
+                SizedBox(height: 20),
+                Text(
+                  "Welcome to BookNest",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 15),
+                TextField(
+                  //controller: emailController,
+                  decoration: InputDecoration(
+                    labelText: "Email",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 15),
+                TextField(
+                  //controller: passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeScreen()),
+                    );// Handle login logic
+                  },
+                  child: Text('Login'),
+
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+}
+
 class LibraryApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -17,7 +151,7 @@ class LibraryApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Library Management',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: LoginPage(),
+      home: LoginRegisterPage(),
     );
   }
 }
@@ -36,7 +170,10 @@ class HomeScreen extends StatelessWidget {
     ComputingPage(),
     MathematicsPage(),
     ScienceFictionPage(),
-    EconomicsPage()
+    EconomicsPage(),
+    LoginPage(),
+    LoginRegisterPage(),
+    RegisterPage()
   ];
 
   final int notificationCount = 5;
@@ -197,63 +334,8 @@ class NotificationsPage extends StatelessWidget {
     );
   }
 }
-// class LiteraturePage extends StatefulWidget {
-//   @override
-//   _LiteraturePageState createState() => _LiteraturePageState();
-// }
-//
-// class _LiteraturePageState extends State<LiteraturePage> {
-//   late Future<List<Book>> _booksFuture;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _booksFuture = fetchBooksByType("literature");
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Literature")),
-//       body: FutureBuilder<List<Book>>(
-//         future: _booksFuture,
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError || !snapshot.hasData) {
-//             return Center(child: Text("Failed to load books."));
-//           }
-//
-//           final books = snapshot.data!;
-//           body: Container(
-//             decoration: BoxDecoration(
-//               image: DecorationImage(
-//                 image: NetworkImage(
-//                     "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//           );
-//           return ListView.builder(
-//             itemCount: books.length,
-//             itemBuilder: (context, index) {
-//               final book = books[index];
-//               return Card(
-//                 child: ListTile(
-//                   title: Text(book.title),
-//                   subtitle: Text("${book.author}\n${book.description}"),
-//
-//
-//                 ),
-//               );
-//             },
-//           );
-//         },
-//       ),
-//
-//     );
-//   }
-// }
+
+
 class LiteraturePage extends StatefulWidget {
   @override
   _LiteraturePageState createState() => _LiteraturePageState();
@@ -715,43 +797,6 @@ class _EconomicsPageState extends State<EconomicsPage> {
 
 
 
-// class LiteraturePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Literature")),
-//         body: Container(
-//           decoration: BoxDecoration(
-//             image: DecorationImage(
-//               image: NetworkImage(
-//                   "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-//               fit: BoxFit.cover,
-//             ),
-//           ),
-//         )
-//     );
-//   }
-// }
-
-// class ComputingPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Computing")),
-//         body: Container(
-//           decoration: BoxDecoration(
-//             image: DecorationImage(
-//               image: NetworkImage(
-//                   "https://cdn.pixabay.com/photo/2017/08/06/22/01/books-2596809_1280.jpg"),
-//               fit: BoxFit.cover,
-//             ),
-//           ),
-//         )
-//     );
-//   }
-// }
-
-
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -796,20 +841,62 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text("Settings")),
-        body: Container(
-          decoration: BoxDecoration(
-            color:Colors.brown.shade200,
-          ),
-        )
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(bottom: 8),
+              child: ListTile(title: Text('Account')),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(bottom: 8),
+              child: ListTile(title: Text('Language')),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(bottom: 8),
+              child: ListTile(title: Text('Help')),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              margin: EdgeInsets.only(bottom: 8),
+              child: ListTile(title: Text('Logout'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginRegisterPage()),
+                    );
+                  }
+              ),
+            ),
+          ],
+        ),
+      ),
+
     );
   }
 }
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -847,7 +934,7 @@ class _LoginPageState extends State<LoginPage> {
         // Navigate to Home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => LoginPage()),
         );
       } else {
         _showError(data['message'] ?? "Registration failed");
@@ -914,12 +1001,24 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: isLoading ? null : registerUser,
                   child: isLoading
                       ? CircularProgressIndicator(color: Colors.white)
-                      : Text("Login"),
+                      : Text("Register"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.brown,
                     foregroundColor: Colors.white,
                   ),
+
+
                 ),
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+
+                child: Text("Already an user,Login!"),
+          )
               ],
             ),
           ),
