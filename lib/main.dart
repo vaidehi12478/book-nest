@@ -29,7 +29,9 @@ class LoginRegisterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(color: Colors.brown.shade200),
+        child:Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
@@ -39,14 +41,15 @@ class LoginRegisterPage extends StatelessWidget {
                 'Welcome!',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
               OutlinedButton(
                 onPressed: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => LoginPage()));
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 15),
+                  side: BorderSide(color: Colors.deepPurple),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)),
                 ),
@@ -69,23 +72,11 @@ class LoginRegisterPage extends StatelessWidget {
             ],
           ),
         ),
+        ),
       ),
     );
   }
 }
-
-// Placeholder Login Page
-// class LoginPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Login')),
-//       body: Center(child: Text('Login Page')),
-//     );
-//   }
-// }
-
-// Placeholder Register Page
 class LoginPage extends StatelessWidget {
 
   @override
@@ -210,9 +201,13 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.brown.shade300),
               child: Column(
                 children: [
-                  Text(
+                  Align(
+                alignment: Alignment.topLeft,
+
+                  child: Text(
                     'Library Menu',
                     style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
                   ),
                   Row(
                     children: [
@@ -795,21 +790,81 @@ class _EconomicsPageState extends State<EconomicsPage> {
 }
 
 
-
-
 class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Profile")),
-        body: Container(
-          decoration: BoxDecoration(
-          color:Colors.brown.shade200,
-        )
-        )
+      appBar: AppBar(title: Text("Profile")),
+      body: Container(
+        decoration: BoxDecoration(color: Colors.brown.shade200),
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                image: DecorationImage(
+                  image: NetworkImage("https://i.im.ge/2025/04/04/pCowYC.boy1.jpeg"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: EdgeInsets.only(bottom: 8),
+                    child: ListTile(title: Text('Name')),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: EdgeInsets.only(bottom: 8),
+                    child: ListTile(title: Text('Email')),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: EdgeInsets.only(bottom: 8),
+                    child: ListTile(title: Text('Batch')),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    margin: EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      title: Text('Phone Number'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginRegisterPage()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+
 class BooksIssued extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -842,6 +897,7 @@ class Settings extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text("Settings")),
       body: Container(
+        decoration: BoxDecoration(color: Colors.brown.shade200),
         padding: EdgeInsets.all(16.0),
         child: ListView(
           children: [
