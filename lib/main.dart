@@ -81,7 +81,107 @@ class LoginRegisterPage extends StatelessWidget {
 
 
 // Placeholder Register Page
-class LoginPage extends StatelessWidget {
+// class LoginPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text('Login')),
+//       backgroundColor: Colors.brown.shade100,
+//       body: Center(
+//         child: Padding(
+//           padding: const EdgeInsets.all(24.0),
+//           child: SingleChildScrollView(
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Icon(Icons.book, size: 100, color: Colors.brown),
+//                 SizedBox(height: 20),
+//                 Text(
+//                   "Welcome to BookNest",
+//                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+//                 ),
+//                 SizedBox(height: 15),
+//                 TextField(
+//                   //controller: emailController,
+//                   decoration: InputDecoration(
+//                     labelText: "Email",
+//                     border: OutlineInputBorder(),
+//                   ),
+//                 ),
+//                 SizedBox(height: 15),
+//                 TextField(
+//                   //controller: passwordController,
+//                   obscureText: true,
+//                   decoration: InputDecoration(
+//                     labelText: "Password",
+//                     border: OutlineInputBorder(),
+//                   ),
+//                 ),
+//                 SizedBox(height: 20),
+//                 ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(builder: (context) => HomeScreen()),
+//                     ); // Handle login logic
+//                   },
+//                   child: Text('Login'),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+  final String apiUrl = 'https://frmq1lm1-5000.inc1.devtunnels.ms/api/users/login';
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': emailController.text.trim(),
+        'password': passwordController.text.trim(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      String token = data['token'];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth-token', token);
+      await prefs.setString('userId', data['user']['_id']);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed! Please check your credentials')),
+      );
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,7 +202,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 SizedBox(height: 15),
                 TextField(
-                  //controller: emailController,
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
@@ -110,7 +210,7 @@ class LoginPage extends StatelessWidget {
                 ),
                 SizedBox(height: 15),
                 TextField(
-                  //controller: passwordController,
+                  controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: "Password",
@@ -118,13 +218,10 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()),
-                    ); // Handle login logic
-                  },
+                isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                  onPressed: loginUser,
                   child: Text('Login'),
                 ),
               ],
@@ -321,6 +418,102 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+
+class IssuedBook {
+  final String title;
+  final String author;
+  final String id;
+
+  IssuedBook({required this.title, required this.author, required this.id});
+
+  factory IssuedBook.fromJson(Map<String, dynamic> json) {
+    return IssuedBook(
+      title: json['title'] ?? 'Untitled',
+      author: json['author'] ?? 'Unknown Author',
+      id: json['_id'] ?? '',
+    );
+  }
+}
+
+class BooksIssued extends StatefulWidget {
+  @override
+  _BooksIssuedState createState() => _BooksIssuedState();
+}
+
+class _BooksIssuedState extends State<BooksIssued> {
+  List<IssuedBook> issuedBooks = [];
+  bool isLoading = true;
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserIdAndFetchBooks();
+  }
+
+  Future<void> loadUserIdAndFetchBooks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString('userId');
+
+    if (userId == null) {
+      print("User not logged in or userId not found");
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    await fetchIssuedBooks();
+  }
+
+  Future<void> fetchIssuedBooks() async {
+    final url = Uri.parse("https://frmq1lm1-5000.inc1.devtunnels.ms/api/books/issued/$userId");
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        setState(() {
+          issuedBooks = jsonData.map((book) => IssuedBook.fromJson(book)).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to load books");
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Books Issued")),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : issuedBooks.isEmpty
+          ? Center(child: Text("No books issued."))
+          : ListView.builder(
+        itemCount: issuedBooks.length,
+        itemBuilder: (context, index) {
+          final book = issuedBooks[index];
+          return Card(
+            margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: ListTile(
+              leading: Icon(Icons.book, color: Colors.brown),
+              title: Text(book.title),
+              subtitle: Text("Author: ${book.author}"),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -439,6 +632,35 @@ class _BookCategoryPageState extends State<BookCategoryPage> {
     "Economics":
         "https://media-hosting.imagekit.io/69e91b4e3e254bf2/download.jpg?Expires=1839241928&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=EUbNEGe-bBPOaNSRadPS6QGMEKWtWJj1uqVTdWkm8suGaswqfDrsBPppiGm7~C1w6SRf7kF2~Qkx-p8LbbSr8GXIbfoirkAznB-HuAkZ1BnXX42Y6WRMyWY9s4M7Yjam8ja47vTtVd8R3DsdsT-DEwtBwZCatmq7GxhROwlId0JOueQ-wTuwIj5yjXRURV36qo3RrBs5GCgJ9mTy3JRYNbgO19QuKgTzT31Hw0IOoZAV3CJWem1QtfmtaSyNUkJSIGhdGwOaZ5YlDjYxC2eDF5dsUGkag81IMNN39a--JCV-C6b15NronAjid8qcTCiF4JZNepkhasAO9XQ5bA9orA__",
   };
+
+  Future<void> returnIssuedBook(Book book) async {
+    final url = '$apiUrl/api/books/return';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'bookId': book.id}),
+      );
+
+      final jsonData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        print('Book returned successfully');
+        _showSuccess(jsonData['message']);
+        setState(() {
+          _booksFuture = fetchBooksByType(widget.bookType); // Refresh the list
+        });
+      } else {
+        print('Return error');
+        _showError(jsonData['error']);
+      }
+    } catch (e) {
+      print('Error: $e');
+      _showError('Network error');
+    }
+  }
+
 
   Future<List<Book>> fetchBooksByType(String type) async {
     final response = await http.get(
@@ -570,33 +792,68 @@ class _BookCategoryPageState extends State<BookCategoryPage> {
                     Positioned(
                       bottom: 10,
                       right: 10,
-                      child: FloatingActionButton(
-                        // onPressed: book.issuedTo != null
-                        // ? null
-                        //     : () => addToIssuedBooks(book),
-                        onPressed:
-                            (book.issuedTo == null || book.issuedTo.isEmpty)
-                                ? () => addToIssuedBooks(book)
-                                : null,
-                        child: Icon(
-                          (book.issuedTo == null || book.issuedTo.isEmpty)
-                              ? Icons.add
-                              : Icons.check,
-                          color: Colors.white,
-                        ),
-                        backgroundColor:
-                            (book.issuedTo == null || book.issuedTo.isEmpty)
-                                ? Colors.green
-                                : Colors.red,
-
-                        // child: Icon(
-                        // book.issuedTo != null ? Icons.check : Icons.add,
-                        // color: Colors.white,
-                        // ),
-                        // backgroundColor:
-                        // book.issuedTo != null ? Colors.grey : Colors.green,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (book.issuedTo == null || book.issuedTo.isEmpty)
+                            FloatingActionButton(
+                              heroTag: 'add_${book.id}',
+                              onPressed: () => addToIssuedBooks(book),
+                              child: Icon(Icons.add, color: Colors.white),
+                              backgroundColor: Colors.green,
+                              mini: true,
+                            )
+                          else ...[
+                            FloatingActionButton(
+                              heroTag: 'tick_${book.id}',
+                              onPressed: null,
+                              child: Icon(Icons.check, color: Colors.white),
+                              backgroundColor: Colors.red,
+                              mini: true,
+                            ),
+                            SizedBox(width: 8),
+                            FloatingActionButton(
+                              heroTag: 'return_${book.id}',
+                              onPressed: () => returnIssuedBook(book),
+                              child: Icon(Icons.remove, color: Colors.white),
+                              backgroundColor: Colors.orange,
+                              mini: true,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
+
+                    // Positioned(
+                    //   bottom: 10,
+                    //   right: 10,
+                    //   child: FloatingActionButton(
+                    //     // onPressed: book.issuedTo != null
+                    //     // ? null
+                    //     //     : () => addToIssuedBooks(book),
+                    //     onPressed:
+                    //         (book.issuedTo == null || book.issuedTo.isEmpty)
+                    //             ? () => addToIssuedBooks(book)
+                    //             : null,
+                    //     child: Icon(
+                    //       (book.issuedTo == null || book.issuedTo.isEmpty)
+                    //           ? Icons.add
+                    //           : Icons.check,
+                    //       color: Colors.white,
+                    //     ),
+                    //     backgroundColor:
+                    //         (book.issuedTo == null || book.issuedTo.isEmpty)
+                    //             ? Colors.green
+                    //             : Colors.red,
+                    //
+                    //     // child: Icon(
+                    //     // book.issuedTo != null ? Icons.check : Icons.add,
+                    //     // color: Colors.white,
+                    //     // ),
+                    //     // backgroundColor:
+                    //     // book.issuedTo != null ? Colors.grey : Colors.green,
+                    //   ),
+                    // ),
                   ],
                 );
               },
@@ -1128,15 +1385,15 @@ class Profile extends StatelessWidget {
   }
 }
 
-class BooksIssued extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Books Issued")),
-      body: Container(decoration: BoxDecoration(color: Colors.brown.shade200)),
-    );
-  }
-}
+// class BooksIssued extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Books Issued")),
+//       body: Container(decoration: BoxDecoration(color: Colors.brown.shade200)),
+//     );
+//   }
+// }
 
 class Tracker extends StatelessWidget {
   @override
